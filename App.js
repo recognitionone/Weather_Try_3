@@ -1,5 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+// import { FlatList } from 'react-native';
+// import ForecastCard from './components/ForecastCard';
+
 import Weather from './components/Weather';
 
 import { API_KEY } from './utils/WeatherAPIKey';
@@ -7,6 +10,8 @@ import { API_KEY } from './utils/WeatherAPIKey';
 export default class App extends React.Component {
   state = {
     isLoading: true,
+    
+
     temperature: 0,
     pressure_here: 0,
     humidity_here: 0,
@@ -33,26 +38,31 @@ componentDidMount() {
   fetchWeather(lat = 25, lon = 25) {
     fetch(
       `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
+      // `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
     )
       .then(res => res.json())
+    
       .then(json => {
         // console.log(json);
         this.setState({
+
           temperature: json.main.temp,
           pressure_here: json.main.pressure,
           humidity_here: json.main.humidity,
-          wind: json.wind.speed,
-          
+          wind: json.wind.speed,          
           weatherCondition: json.weather[0].main,
+
           isLoading: false
           });
       });
 }
 
 
+
   render() {
     const { isLoading, weatherCondition, temperature, pressure_here, humidity_here, wind } = this.state;
     return (
+
       <View style={styles.container}>
         { isLoading ? (
           <View style={styles.loadingContainer}>
