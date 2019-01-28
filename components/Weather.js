@@ -22,13 +22,10 @@ const Weather = ({ weather, temperature, pressure_here, humidity_here, wind }) =
       </View>
       <View style={styles.bodyContainer}>
         <Text style={styles.subtitle}>{temperature}˚C</Text>
-
         <Text style={styles.subtitle}>{weatherConditions[weather].title}</Text>
         <Text style={styles.subtitle}>{pressure_here} hPa</Text>
         <Text style={styles.subtitle}>Humidity: {humidity_here}</Text>
         <Text style={styles.subtitle}>Wind: {wind} km/h</Text>
-
-  
       </View>
     </View>
   );
@@ -38,6 +35,8 @@ Weather.propTypes = {
   temperature: PropTypes.number.isRequired,
   weather: PropTypes.string
 };
+
+
 
 const styles = StyleSheet.create({
   weatherContainer: {

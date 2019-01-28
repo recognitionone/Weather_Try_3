@@ -1,28 +1,27 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-// import { FlatList } from 'react-native';
-// import ForecastCard from './components/ForecastCard';
+import { observable, action, computed } from 'mobx';
+import { observer, Provider } from 'mobx-react';
 
 import Weather from './components/Weather';
 
 import { API_KEY } from './utils/WeatherAPIKey';
 
-export default class App extends React.Component {
-  state = {
-    isLoading: true,
-    
 
-    temperature: 0,
-    pressure_here: 0,
-    humidity_here: 0,
-    wind: null,
-    
 
-    weatherCondition: null,
-    error: null
-};
 
-componentDidMount() {
+class WeatherData {
+  id=Math.random();
+  @observable isLoading = true;
+  @observable temperature = 0;
+  @observable pressure_here = 0;
+  @observable humidity_here = 0;
+  @observable wind = 0;
+  @observable weatherCondition = null;
+  @error = null;
+
+  @action
+  componentDidMount() {
     navigator.geolocation.getCurrentPosition(
       position => {
         this.fetchWeather(position.coords.latitude, position.coords.longitude);
@@ -35,53 +34,53 @@ componentDidMount() {
     );
   }
 
-  fetchWeather(lat = 25, lon = 25) {
+  @action
+   fetchWeather(lat = 25, lon = 25) {
     fetch(
       `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
       // `http://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&APPID=${API_KEY}&units=metric`
     )
       .then(res => res.json())
-    
-      .then(json => {
-        // console.log(json);
-        this.setState({
+      .then(action(json => {
+          this.temperature: json.main.temp,
+          this.pressure_here: json.main.pressure,
+          this.humidity_here: json.main.humidity,
+          this.wind: json.wind.speed,          
+          this.weatherCondition: json.weather[0].main,
 
-          temperature: json.main.temp,
-          pressure_here: json.main.pressure,
-          humidity_here: json.main.humidity,
-          wind: json.wind.speed,          
-          weatherCondition: json.weather[0].main,
-
-          isLoading: false
-          });
-      });
+          this.isLoading: false
+      }));
+  }
 }
 
-
+@observer
+export default class App extends React.Component {
 
   render() {
-    const { isLoading, weatherCondition, temperature, pressure_here, humidity_here, wind } = this.state;
+    const t = this.props.temperature;
+    // const { isLoading, weatherCondition, temperature, pressure_here, humidity_here, wind } = this.state;
     return (
-
       <View style={styles.container}>
-        { isLoading ? (
-          <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Fetching The Weather</Text>
-          </View>
-        ) : (
-          <View style={styles.loadingContainer}>
-            <View >
-            <Text style={styles.loadingText}> The Weather</Text>
-          </View>
+        {t.isLoading ? 
+          (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>Fetching The Weather</Text>
+            </View>
+          ) : (
+            <View>
+              <Weather 
+                weather={t.weatherCondition} 
+                temperature={t.temperature} 
+                pressure_here={t.pressure_here} 
+                humidity_here={t.humidity_here} 
+                wind={t.wind}/>
+            </View>
+          )
+        }
 
-          <Weather weather={weatherCondition} temperature={temperature} 
-                   pressure_here={pressure_here} humidity_here={humidity_here} wind={wind}/>
-          </View>
-        ) }
-      </View>
-    );
 }
-}
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
