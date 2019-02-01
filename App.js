@@ -7,7 +7,7 @@ import Weather from './components/Weather';
 
 import { API_KEY } from './utils/WeatherAPIKey';
 
-
+//branch: second
 
 
 class WeatherData {
@@ -79,6 +79,7 @@ export default class App extends React.Component {
         }
 
 }
+
 
 
 const styles = StyleSheet.create({
